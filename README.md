@@ -1,1 +1,1 @@
-HI!
+This repo houses the Movie Administration app which will eventually be fit into a full movie review aggregation website similar to Rotten Tomatoes. MoviesAdmin will be focused on the sections on the site that need accelerated access such as site moderators, trusted critics and audience members. Critics and audience members can add their reviews and give a rating, while moderators can remove any inappropriate, hateful or botted reviews.
