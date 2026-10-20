@@ -35,6 +35,11 @@ body {
     height: auto;
 }
 
+.thumbnail {
+    width: 150px;
+    height: auto;
+}
+
 /*.custom-navbar {
     background-color: darkgreen
 }*/

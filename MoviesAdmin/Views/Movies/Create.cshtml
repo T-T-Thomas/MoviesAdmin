@@ -20,7 +20,7 @@
 
             <div class="mb-3">
                 <label asp-for="Summary" class="form-label"></label>
-                <input asp-for="Summary" class="form-control" />
+                <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Summary" class="text-danger"></span>
             </div>
 
@@ -51,6 +51,7 @@
             <div class="mb-3">
                 <label for="ImageUpload" class="form-label">Image Upload</label>
                 <input type="file" id="ImageUpload" name="ImageUpload" class="form-control" />
+                @Html.ValidationMessage("ImageUpload", new { @class = "text-danger" })
             </div>
 
             <div class="mb-3">
