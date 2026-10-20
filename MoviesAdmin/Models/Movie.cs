@@ -27,7 +27,6 @@ namespace MoviesAdmin.Models
         [Required]
         public DateTime ReleaseDate { get; set; } //e.g August 24,2026
 
-        [Required]
-        public string PosterImage = string.Empty; //poster of the movie e.g matrix.png
+        public string? ImageUrl { get; set; } = string.Empty; //poster of the movie e.g matrix.png
     }
 }

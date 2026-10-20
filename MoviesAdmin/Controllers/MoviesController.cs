@@ -1,15 +1,19 @@
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAdmin.Models;
+using MoviesAdmin.Services;
+using static System.Net.WebRequestMethods;
 
 public class MoviesController : Controller
 {
     private readonly MoviesAdminContext _context;
+    private readonly AzureStorageService _azureStorage;
 
-    public MoviesController(MoviesAdminContext context)
+
+    public MoviesController(MoviesAdminContext context, AzureStorageService azureStorage)
     {
         _context = context;
+        _azureStorage = azureStorage;
     }
 
     // GET: MOVIES
@@ -51,16 +55,37 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Summary,RunTime,Genre,AgeRating,ReleaseDate")] Movie movie)
+    public async Task<IActionResult> Create([Bind("Id,Title,Summary,RunTime,Genre,AgeRating,ReleaseDate")] Movie movie, IFormFile ImageUpload)
     {
-        if (ModelState.IsValid)
+        if (ModelState.IsValid) // validate input
         {
-            _context.Add(movie);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            //
+            // Upload file to Azure Stroage (after input validation occurs)
+            //
+
+            // Make a unique filename (GUID.ext)
+            string extension = Path.GetExtension(ImageUpload.FileName); // includes the leading dot, e.g. ".jpg"
+            string newFileName = $"{Guid.NewGuid()}{extension}";
+
+            // Upload file to Azure Storage
+            string url = await _azureStorage.UploadFileAsync(ImageUpload, newFileName);
+
+            // Set the image URL in trail record            
+            movie.ImageUrl = url;
+
+            //
+            // Save trail in database
+            //
+
+            _context.Add(movie); // add new trail to context (db)
+            await _context.SaveChangesAsync(); // save context changes in db
+
+            return RedirectToAction(nameof(Index)); // re-direct to Trails/Index page
         }
+
         return View(movie);
     }
+
 
     // GET: MOVIES/Edit/5
     public async Task<IActionResult> Edit(int? id)
