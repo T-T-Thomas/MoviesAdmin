@@ -26,7 +26,7 @@
                 @Html.DisplayNameFor(model => model.Genre)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.AgeRating)
+                @Html.DisplayNameFor(model => model.AudienceRating)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.ReleaseDate)
@@ -49,10 +49,10 @@
                 @Html.DisplayFor(model => item.RunTime)
             </td>
             <td>
-                @Html.DisplayFor(model => item.Genre)
+                @Html.DisplayFor(model => item.Genre.Name)
             </td>
             <td>
-                @Html.DisplayFor(model => item.AgeRating)
+                @Html.DisplayFor(model => item.AudienceRating.Rating)
             </td>
             <td>
                 @Html.DisplayFor(model => item.ReleaseDate)

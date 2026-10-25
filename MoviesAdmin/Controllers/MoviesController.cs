@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using MoviesAdmin.Models;
 using MoviesAdmin.Services;
@@ -21,6 +22,8 @@ public class MoviesController : Controller
     {
         var movies = await _context.Movie
             .OrderByDescending(m => m.ReleaseDate)
+            .Include(m => m.Genre)
+            .Include(m => m.AudienceRating)
             .ToListAsync();
 
         return View(movies);
@@ -47,6 +50,12 @@ public class MoviesController : Controller
     // GET: MOVIES/Create
     public IActionResult Create()
     {
+        var genres = _context.Genres.ToList();
+        ViewBag.GenreId = new SelectList(genres, "Id", "Name");
+
+        var audienceRatings = _context.AudienceRatings.ToList();
+        ViewBag.AudienceRatingId = new SelectList(audienceRatings, "Id", "Rating");
+
         return View();
     }
 
@@ -55,9 +64,9 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind("Id,Title,Summary,RunTime,Genre,AgeRating,ReleaseDate")] Movie movie, IFormFile? ImageUpload)
+    public async Task<IActionResult> Create([Bind("Id,Title,Summary,RunTime,ReleaseDate,GenreId,AudienceRatingId")] Movie movie, IFormFile? ImageUpload)
     {
-        //
+        //Validate if image File is missing
         if (ImageUpload == null)
         {
             ModelState.AddModelError("ImageUpload", "Image file is required");
@@ -77,11 +86,11 @@ public class MoviesController : Controller
             // Upload file to Azure Storage
             string url = await _azureStorage.UploadFileAsync(ImageUpload, newFileName);
 
-            // Set the image URL in trail record            
+            // Set the image URL in movie record            
             movie.ImageUrl = url;
 
             //
-            // Save trail in database
+            // Save movie in database
             //
 
             _context.Add(movie); // add new trail to context (db)
@@ -89,6 +98,12 @@ public class MoviesController : Controller
 
             return RedirectToAction(nameof(Index)); // re-direct to Trails/Index page
         }
+
+        var genres = _context.Genres.ToList();
+        ViewBag.GenreId = new SelectList(genres, "Id", "Name");
+
+        var audienceRatings = _context.AudienceRatings.ToList();
+        ViewBag.AudienceRatingId = new SelectList(audienceRatings, "Id", "Rating");
 
         return View(movie);
     }
@@ -115,7 +130,7 @@ public class MoviesController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Summary,RunTime,Genre,AgeRating,ReleaseDate")] Movie movie)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Summary,RunTime,ReleaseDate,GenreId,AudienceRatingId")] Movie movie)
     {
         if (id != movie.Id)
         {
@@ -142,6 +157,13 @@ public class MoviesController : Controller
             }
             return RedirectToAction(nameof(Index));
         }
+
+        var genres = _context.Genres.ToList();
+        ViewBag.GenreId = new SelectList(genres, "Id", "Name");
+
+        var audienceRatings = _context.AudienceRatings.ToList();
+        ViewBag.AudienceRatingId = new SelectList(audienceRatings, "Id", "Rating");
+
         return View(movie);
     }
 
