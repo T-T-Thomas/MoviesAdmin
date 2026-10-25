@@ -22,7 +22,7 @@
             </div>
             <div class="mb-3">
                 <label asp-for="Summary" class="form-label"></label>
-                <input asp-for="Summary" class="form-control" />
+                <textarea asp-for="Summary" class="form-control" rows="3"></textarea>
                 <span asp-validation-for="Summary" class="text-danger"></span>
             </div>
             <div class="mb-3">
@@ -39,6 +39,10 @@
                 <label asp-for="AgeRating" class="form-label"></label>
                 <input asp-for="AgeRating" class="form-control" />
                 <span asp-validation-for="AgeRating" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image Upload: </label><br />
+                <img src="@Model.ImageUrl" alt="@Model.Title" class="thumbnail"/>
             </div>
             <div class="mb-3">
                 <label asp-for="ReleaseDate" class="form-label"></label>
