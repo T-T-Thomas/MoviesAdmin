@@ -1,8 +1,10 @@
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using MoviesAdmin.Models;
 
+[Authorize]
 public class AudienceRatingsController : Controller
 {
     private readonly MoviesAdminContext _context;
@@ -37,6 +39,7 @@ public class AudienceRatingsController : Controller
     }
 
     // GET: AUDIENCERATINGS/Create
+    [Authorize(Roles = "administrator")]
     public IActionResult Create()
     {
         return View();
@@ -47,6 +50,7 @@ public class AudienceRatingsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "administrator")]
     public async Task<IActionResult> Create([Bind("Id,Rating,Movies")] AudienceRating audiencerating)
     {
         if (ModelState.IsValid)
@@ -59,6 +63,7 @@ public class AudienceRatingsController : Controller
     }
 
     // GET: AUDIENCERATINGS/Edit/5
+    [Authorize(Roles = "administrator")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -79,6 +84,7 @@ public class AudienceRatingsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "administrator")]
     public async Task<IActionResult> Edit(int? id, [Bind("Id,Rating,Movies")] AudienceRating audiencerating)
     {
         if (id != audiencerating.Id)
@@ -110,6 +116,7 @@ public class AudienceRatingsController : Controller
     }
 
     // GET: AUDIENCERATINGS/Delete/5
+    [Authorize(Roles = "administrator")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -130,6 +137,7 @@ public class AudienceRatingsController : Controller
     // POST: AUDIENCERATINGS/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = "administrator")]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
         var audiencerating = await _context.AudienceRatings.FindAsync(id);
