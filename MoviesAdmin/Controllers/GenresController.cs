@@ -39,7 +39,7 @@ public class GenresController : Controller
     }
 
     // GET: GENRES/Create
-    [Authorize(Roles = "administrator")]
+    //[Authorize(Roles = "administrator")]
     public IActionResult Create()
     {
         return View();
@@ -50,8 +50,8 @@ public class GenresController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "administrator")]
-    public async Task<IActionResult> Create([Bind("Id,Name,Movies")] Genre genre)
+    //[Authorize(Roles = "administrator")]
+    public async Task<IActionResult> Create([Bind("Id,Name")] Genre genre)
     {
         if (ModelState.IsValid)
         {
@@ -63,7 +63,7 @@ public class GenresController : Controller
     }
 
     // GET: GENRES/Edit/5
-    [Authorize(Roles = "administrator")]
+    //[Authorize(Roles = "administrator")]
     public async Task<IActionResult> Edit(int? id)
     {
         if (id == null)
@@ -84,8 +84,8 @@ public class GenresController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "administrator")]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name,Movies")] Genre genre)
+    //[Authorize(Roles = "administrator")]
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Name")] Genre genre)
     {
         if (id != genre.Id)
         {
@@ -116,7 +116,7 @@ public class GenresController : Controller
     }
 
     // GET: GENRES/Delete/5
-    [Authorize(Roles = "administrator")]
+    //[Authorize(Roles = "administrator")]
     public async Task<IActionResult> Delete(int? id)
     {
         if (id == null)
@@ -137,7 +137,7 @@ public class GenresController : Controller
     // POST: GENRES/Delete/5
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
-    [Authorize(Roles = "administrator")]
+    //[Authorize(Roles = "administrator")]
     public async Task<IActionResult> DeleteConfirmed(int? id)
     {
         var genre = await _context.Genres.FindAsync(id);

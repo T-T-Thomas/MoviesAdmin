@@ -57,8 +57,13 @@
             <td>
                 @Html.DisplayFor(model => item.ReleaseDate)
             </td>
-
             <td>
+                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+
+            @* <td>
                 @if(User.IsInRole("administrator"))
                 {
                     <div>
@@ -71,7 +76,7 @@
                 {
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                 }
-            </td>
+            </td> *@
         </tr>
 }
     </tbody>
