@@ -19,17 +19,16 @@ namespace MoviesAdmin.Models
         [Required]
         public double RunTime { get; set; } //126 minutes or 2h 6m
 
-        //[Required]
-        //public string Genre { get; set; } = string.Empty; //e.g horror or action
+        [ValidateNever]
+        public List<CriticReview> CriticReviews { get; set;} = new List<CriticReview>();
 
-        //[Required]
-        //public string AgeRating { get; set; } = string.Empty; //e.g PG-13
-
+        [Display(Name = "Genre")]
         public int GenreId { get; set; }
 
         [ValidateNever]
         public Genre Genre { get; set; } = null!;
 
+        [Display(Name = "Audience Rating")]
         public int AudienceRatingId { get; set; }
 
         [ValidateNever]
