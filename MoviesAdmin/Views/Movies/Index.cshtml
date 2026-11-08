@@ -13,6 +13,9 @@
 } else
 {
     <h1>Movies</h1>
+    <p>
+        <a asp-area="" asp-controller="CriticReviews" asp-action="Index">Review a Movie</a>
+    </p>
 }
 
 <table class="table">
@@ -80,8 +83,7 @@
                 else
                 {
                     <div>
-                        <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                        <a asp-area="" asp-controller="CriticReviews" asp-action="Index">Go To Reviews</a>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
                     </div>                    
                 }
             </td>

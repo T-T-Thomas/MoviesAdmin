@@ -63,13 +63,25 @@ public class CriticReviewsController : Controller
     }
 
     // GET: CRITICREVIEWS/Create
-    public IActionResult Create(int? movieId)
+    public async Task<IActionResult> Create(int? movieId)
     {
-        ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", movieId);
+        // Find IDs of movies that the current user has already reviewed
+        var reviewedMovieIds = await _context.CriticReview
+            .Where(r => r.CreatedBy == _userId)
+            .Select(r => r.MovieId)
+            .ToListAsync();
+
+        // Get only movies that are NOT in the reviewed list
+        var availableMovies = await _context.Movie
+            .Where(m => !reviewedMovieIds.Contains(m.Id))
+            .ToListAsync();
+
+        // Pass the filtered list to the SelectList
+        ViewData["MovieId"] = new SelectList(availableMovies, "Id", "Title", movieId);
 
         return View();
     }
-    
+
 
     // POST: CRITICREVIEWS/Create
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -78,8 +90,17 @@ public class CriticReviewsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind("Id,MovieId,Description,Rating,IsPublished")] CriticReview criticReview)
     {
-        //Assign userId to record
+        // Assign userId to record
         criticReview.CreatedBy = _userId;
+
+        // Check if the critic has already reviewed this movie
+        bool existingReview = await _context.CriticReview
+            .AnyAsync(r => r.MovieId == criticReview.MovieId && r.CreatedBy == _userId);
+
+        if (existingReview)
+        {
+            ModelState.AddModelError("MovieId", "You have already written a review for this movie.");
+        }
 
         if (ModelState.IsValid)
         {
@@ -105,13 +126,23 @@ public class CriticReviewsController : Controller
             .Where(m => m.CreatedBy == _userId && m.IsPublished == false) // Only edit when not published yet
             .FirstOrDefaultAsync(m => m.Id == id);
 
-
         if (criticReview == null)
         {
             return NotFound();
         }
 
-        ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", criticReview.MovieId);
+        // Find IDs of movies reviewed by the current user, EXCLUDING the current movie being edited
+        var reviewedMovieIds = await _context.CriticReview
+            .Where(r => r.CreatedBy == _userId && r.MovieId != criticReview.MovieId)
+            .Select(r => r.MovieId)
+            .ToListAsync();
+
+        // Get available movies
+        var availableMovies = await _context.Movie
+            .Where(m => !reviewedMovieIds.Contains(m.Id))
+            .ToListAsync();
+
+        ViewData["MovieId"] = new SelectList(availableMovies, "Id", "Title", criticReview.MovieId);
 
         return View(criticReview);
     }
@@ -121,11 +152,23 @@ public class CriticReviewsController : Controller
     // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,MovieId,Description,Rating,IsPublished,CreatedBy,CreatedDate")] CriticReview criticReview)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,MovieId,Description,Rating,IsPublished,CreatedDate")] CriticReview criticReview)
     {
         if (id != criticReview.Id)
         {
             return NotFound();
+        }
+
+        // Ensure the logged-in user owns this review and assign CreatedBy securely
+        criticReview.CreatedBy = _userId;
+
+        // Ensure they aren't changing it to a movie they already reviewed (excluding current review ID)
+        bool duplicateReview = await _context.CriticReview
+            .AnyAsync(r => r.MovieId == criticReview.MovieId && r.CreatedBy == _userId && r.Id != criticReview.Id);
+
+        if (duplicateReview)
+        {
+            ModelState.AddModelError("MovieId", "You already have another review registered for this movie.");
         }
 
         if (ModelState.IsValid)
@@ -146,11 +189,18 @@ public class CriticReviewsController : Controller
                     throw;
                 }
             }
+            catch (DbUpdateException)
+            {
+                // Catch unique constraint violations gracefully instead of crashing
+                ModelState.AddModelError("", "A review for this movie by this user already exists.");
+                ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", criticReview.MovieId);
+                return View(criticReview);
+            }
+
             return RedirectToAction(nameof(Index));
         }
 
         ViewData["MovieId"] = new SelectList(_context.Movie, "Id", "Title", criticReview.MovieId);
-
         return View(criticReview);
     }
 

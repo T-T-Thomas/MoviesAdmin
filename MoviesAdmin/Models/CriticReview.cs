@@ -23,7 +23,7 @@ namespace MoviesAdmin.Models
         public float Rating { get; set; }
 
         [Required]
-        [Display(Name = "Publish")]
+        [Display(Name = "Published")]
         public Boolean IsPublished { get; set; } = false;
 
         public string CreatedBy { get; set; } = string.Empty;
