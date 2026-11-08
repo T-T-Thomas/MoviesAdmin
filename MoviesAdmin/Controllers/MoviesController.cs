@@ -42,6 +42,7 @@ public class MoviesController : Controller
         var movie = await _context.Movie
             .Include(m => m.Genre)
             .Include(m => m.AudienceRating)
+            .Include(m => m.CriticReviews)
             .FirstOrDefaultAsync(m => m.Id == id);
 
         if (movie == null)
@@ -145,7 +146,7 @@ public class MoviesController : Controller
     [HttpPost]
     [ValidateAntiForgeryToken]
     [Authorize(Roles = "administrator")]
-    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Summary,RunTime,ReleaseDate,GenreId,AudienceRatingId,ImageUrl")] Movie movie)
+    public async Task<IActionResult> Edit(int? id, [Bind("Id,Title,Summary,RunTime,ReleaseDate,GenreId,AudienceRatingId")] Movie movie, IFormFile? ImageUpload)
     {
         if (id != movie.Id)
         {
@@ -156,6 +157,28 @@ public class MoviesController : Controller
         {
             try
             {
+                // User selected a new image
+                if (ImageUpload != null)
+                {
+                    string extension = Path.GetExtension(ImageUpload.FileName);
+                    string newFileName = $"{Guid.NewGuid()}{extension}";
+
+                    string url = await _azureStorage.UploadFileAsync(
+                        ImageUpload,
+                        newFileName);
+
+                    movie.ImageUrl = url;
+                }
+                else
+                {
+                    // Keep existing image URL
+                    var existingMovie = await _context.Movie
+                        .AsNoTracking()
+                        .FirstOrDefaultAsync(m => m.Id == movie.Id);
+
+                    movie.ImageUrl = existingMovie?.ImageUrl;
+                }
+
                 _context.Update(movie);
                 await _context.SaveChangesAsync();
             }

@@ -9,9 +9,8 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
+        <form asp-action="Edit" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <input type="hidden" asp-for="Id" />
             <input type="hidden" asp-for="ImageUrl" />
 
@@ -31,16 +30,17 @@
                 <span asp-validation-for="RunTime" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Genre" class="control-label"></label>
+                <label asp-for="Genre" class="form-label"></label>
                 <select asp-for="GenreId" class="form-select" asp-items="ViewBag.GenreId"></select>
             </div>
             <div class="mb-3">
-                <label asp-for="AudienceRating" class="control-label"></label>
+                <label asp-for="AudienceRating" class="form-label"></label>
                 <select asp-for="AudienceRatingId" class="form-select" asp-items="ViewBag.AudienceRatingId"></select>
             </div>
             <div class="mb-3">
-                <label class="form-label">Image Upload:</label><br />
-                <img src="@Model.ImageUrl" alt="@Model.Title" class="thumbnail"/>
+                <label for="ImageUpload" class="form-label">Image Upload</label>
+                <input type="file" id="ImageUpload" name="ImageUpload" class="form-control" />
+                @Html.ValidationMessage("ImageUpload", new { @class = "text-danger" })
             </div>
             <div class="mb-3">
                 <label asp-for="ReleaseDate" class="form-label"></label>

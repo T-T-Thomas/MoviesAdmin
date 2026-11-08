@@ -7,24 +7,29 @@ namespace MoviesAdmin.Models
     {
         public int Id { get; set; }
 
+        [Display(Name = "Movie")]
         public int MovieId {  get; set; }
 
         [ValidateNever]
         public Movie Movie { get; set; } = null!;
 
+        [StringLength(1000)]
         [Required]
         public string Description { get; set; } = string.Empty;
 
         [Required]
         [Range(1, 5)]
+        [Display(Name = "Rating (1-5 stars)")]
         public float Rating { get; set; }
 
         [Required]
-        public Boolean IsPublished { get; set; }
+        [Display(Name = "Publish")]
+        public Boolean IsPublished { get; set; } = false;
 
         public string CreatedBy { get; set; } = string.Empty;
 
         [ScaffoldColumn(false)]
-        public DateTime CreatedDate { get; set;}
+        [Display(Name = "Created Date")]
+        public DateTime CreatedDate { get; set;} = DateTime.Now;
     }
 }
