@@ -11,6 +11,8 @@ public class MoviesAdminContext(DbContextOptions<MoviesAdminContext> options) : 
 
     public DbSet<MoviesAdmin.Models.CriticReview> CriticReview { get; set; } = default!;
 
+    public DbSet<UserSnapshot> UserSnapshot { get; set; } = default!;
+
     //only allow one review per user per movie
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
